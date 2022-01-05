@@ -23,6 +23,7 @@ import (
 
 	"github.com/gravitational/teleport/lib/auth"
 	"github.com/gravitational/teleport/lib/srv/db/common"
+	"github.com/gravitational/teleport/lib/srv/db/sqlserver/protocol"
 
 	"github.com/gravitational/trace"
 	"github.com/sirupsen/logrus"
@@ -42,8 +43,12 @@ type Proxy struct {
 
 // HandleConnection accepts connection from a Postgres client, authenticates
 // it and proxies it to an appropriate database service.
-func (p *Proxy) HandleConnection(ctx context.Context, proxyCtx *common.ProxyContext, tlsConn *tls.Conn) (err error) {
+func (p *Proxy) HandleConnection(ctx context.Context, proxyCtx *common.ProxyContext, tlsConn *tls.Conn) error {
 	fmt.Println("=== [PROXY] === SQL SERVER")
+	err := p.handlePrelogin(ctx, tlsConn)
+	if err != nil {
+		return trace.Wrap(err)
+	}
 	serviceConn, err := p.Service.Connect(ctx, proxyCtx)
 	if err != nil {
 		return trace.Wrap(err)
@@ -53,5 +58,36 @@ func (p *Proxy) HandleConnection(ctx context.Context, proxyCtx *common.ProxyCont
 	if err != nil {
 		return trace.Wrap(err)
 	}
+	return nil
+}
+
+func (p *Proxy) handlePrelogin(ctx context.Context, tlsConn *tls.Conn) error {
+	pkt, err := protocol.ReadPacket(tlsConn)
+	if err != nil {
+		return trace.Wrap(err)
+	}
+
+	if pkt.Type != protocol.PacketTypePreLogin {
+		return trace.BadParameter("expected prelogin packet, got: %v", pkt)
+	}
+
+	p.Log.Debugf("Got PRELOGIN packet: %v", pkt)
+
+	err = protocol.WritePrelogin(tlsConn)
+	if err != nil {
+		return trace.Wrap(err)
+	}
+
+	pkt, err = protocol.ReadPacket(tlsConn)
+	if err != nil {
+		return trace.Wrap(err)
+	}
+
+	if pkt.Type != protocol.PacketTypeLogin7 {
+		return trace.BadParameter("expected login7 packet, got: %v", pkt)
+	}
+
+	p.Log.Debugf("Got LOGIN7 packet: %v", pkt)
+
 	return nil
 }
