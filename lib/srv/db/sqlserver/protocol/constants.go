@@ -18,3 +18,14 @@ const (
 	encryptNotSup = 2 // Encryption is not available.
 	encryptReq    = 3 // Encryption is required.
 )
+
+const (
+	verTDS70     = 0x70000000
+	verTDS71     = 0x71000000
+	verTDS71rev1 = 0x71000001
+	verTDS72     = 0x72090002
+	verTDS73A    = 0x730A0003
+	verTDS73     = verTDS73A
+	verTDS73B    = 0x730B0003
+	verTDS74     = 0x74000004
+)

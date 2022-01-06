@@ -62,32 +62,29 @@ func (p *Proxy) HandleConnection(ctx context.Context, proxyCtx *common.ProxyCont
 }
 
 func (p *Proxy) handlePrelogin(ctx context.Context, tlsConn *tls.Conn) error {
-	pkt, err := protocol.ReadPacket(tlsConn)
+	preloginPkt, err := protocol.ReadPreloginPacket(tlsConn)
 	if err != nil {
 		return trace.Wrap(err)
 	}
 
-	if pkt.Type != protocol.PacketTypePreLogin {
-		return trace.BadParameter("expected prelogin packet, got: %v", pkt)
-	}
+	p.Log.Debugf("Got PRELOGIN packet: %v", preloginPkt)
 
-	p.Log.Debugf("Got PRELOGIN packet: %v", pkt)
-
-	err = protocol.WritePrelogin(tlsConn)
+	err = protocol.WritePreloginResponse(tlsConn)
 	if err != nil {
 		return trace.Wrap(err)
 	}
 
-	pkt, err = protocol.ReadPacket(tlsConn)
+	login7Pkt, err := protocol.ReadLogin7Packet(tlsConn)
 	if err != nil {
 		return trace.Wrap(err)
 	}
 
-	if pkt.Type != protocol.PacketTypeLogin7 {
-		return trace.BadParameter("expected login7 packet, got: %v", pkt)
-	}
+	p.Log.Debugf("Got LOGIN7 packet: %v", login7Pkt)
 
-	p.Log.Debugf("Got LOGIN7 packet: %v", pkt)
+	err = protocol.WriteLogin7Response(tlsConn)
+	if err != nil {
+		return trace.Wrap(err)
+	}
 
 	return nil
 }

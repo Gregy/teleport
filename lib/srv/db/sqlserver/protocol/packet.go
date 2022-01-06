@@ -24,14 +24,18 @@ import (
 	"github.com/gravitational/trace"
 )
 
-type Packet struct {
-	// Header
+type PacketHeader struct {
 	Type     uint8
 	Status   uint8
 	Length   uint16
 	SPID     uint16
 	PacketID uint8
 	Window   uint8
+}
+
+type Packet struct {
+	// Header
+	PacketHeader
 
 	// Data
 	Data []byte
@@ -48,12 +52,14 @@ func ReadPacket(conn io.Reader) (*Packet, error) {
 
 	// Build out packet header.
 	pkt := Packet{
-		Type:     header[0],
-		Status:   header[1],
-		Length:   binary.BigEndian.Uint16(header[2:4]),
-		SPID:     binary.BigEndian.Uint16(header[4:6]),
-		PacketID: header[6],
-		Window:   header[7],
+		PacketHeader: PacketHeader{
+			Type:     header[0],
+			Status:   header[1],
+			Length:   binary.BigEndian.Uint16(header[2:4]),
+			SPID:     binary.BigEndian.Uint16(header[4:6]),
+			PacketID: header[6],
+			Window:   header[7],
+		},
 	}
 
 	fmt.Printf("== Packet header: %#v\n", pkt)
@@ -69,7 +75,8 @@ func ReadPacket(conn io.Reader) (*Packet, error) {
 }
 
 const (
-	PacketTypeLogin7   uint8 = 16
+	PacketTypeResponse uint8 = 4  // 0x04
+	PacketTypeLogin7   uint8 = 16 // 0x10
 	PacketTypePreLogin uint8 = 18 // 0x12
 
 	packetHeaderSize = 8

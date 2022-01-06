@@ -11,11 +11,28 @@ import (
 	"github.com/gravitational/trace"
 )
 
-func WritePrelogin(conn net.Conn) error {
+type PreloginPacket struct {
+	Packet Packet
+}
+
+func ReadPreloginPacket(conn net.Conn) (*PreloginPacket, error) {
+	pkt, err := ReadPacket(conn)
+	if err != nil {
+		return nil, trace.Wrap(err)
+	}
+	if pkt.Type != PacketTypePreLogin {
+		return nil, trace.BadParameter("expected PRELOGIN packet, got: %#v", pkt)
+	}
+	return &PreloginPacket{
+		Packet: *pkt,
+	}, nil
+}
+
+func WritePreloginResponse(conn net.Conn) error {
 	var err error
 
 	w := bytes.NewBuffer([]byte{
-		PacketTypePreLogin, // type
+		PacketTypeResponse, // type
 		0x1,                // status - mark as last
 		0, 0,               // length
 		0, 0,
