@@ -46,9 +46,8 @@ func WriteLogin7Response(conn net.Conn) error {
 			&LoginAckToken{
 				Interface:  1,
 				TDSVersion: verTDS74,
-				//ProgName:   "Teleport",
-				ProgName: "Microsoft SQL Server..",
-				ProgVer:  0,
+				ProgName:   "Teleport",
+				ProgVer:    0,
 			},
 			&DoneToken{},
 		},
