@@ -38,10 +38,10 @@ Additionally, an empty right-hand side of the `equals` char means `any values`.
 
 | Format                        | Operator  | Example          | Description                                 |
 |-------------------------------|-----------|------------------|---------------------------------------------|
-| `key=value`                   | exists    | `env=prod`       | rows with label `env=prod`                  |
-| `key=value1\|value2\|value*`  | exists    | `env=prod\|dev`  | rows with labels `env=prod` or `env=dev`    |
-| `-key=value`                  | notexists | `-env=prod`      | rows without label `env=prod`               |
-| `-key=value1\|value2\|value*` | notexists | `-env=prod\|dev` | rows without labels `env=prod` or `env=dev` |
+| `key=value`                   | in        | `env=prod`       | rows with label `env=prod`                  |
+| `key=value1\|value2\|value*`  | in        | `env=prod\|dev`  | rows with labels `env=prod` or `env=dev`    |
+| `-key=value`                  | notin     | `-env=prod`      | rows without label `env=prod`               |
+| `-key=value1\|value2\|value*` | notin     | `-env=prod\|dev` | rows without labels `env=prod` or `env=dev` |
 
 <br/>
 
@@ -50,9 +50,9 @@ Additionally, an empty right-hand side of the `equals` char means `any values`.
 | `env=prod\|dev,os=mac\|linux`     | rows with labels (`env=prod` or `env=dev`) and (`os=mac` or `os=linux`)  |
 | `env=prod\|dev,os=mac,country=us` | rows with labels (`env=prod` or `env=dev`) and `os=mac` and `country=us` |
 | `-env=prod,os=mac`                | rows without label `env=prod` and with label `os=mac`                    |
-| `foo=`                            | rows with a label with key `foo` with any values                         |
-| `-foo=`                           | rows without a label with key `foo` with any values                      |
-| `foo=,-foo=bar`                   | rows with a label with key `foo` with any values except `bar`            |
+| `foo=*`                           | rows with a label with key `foo`; values unchecked                       |
+| `-foo=*`                          | rows without a label with key `foo`; values unchecked                    |
+| `foo=*,-foo=bar`                  | rows with a label with key `foo` with any values except `bar`            |
 
 <br/>
 
