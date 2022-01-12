@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"testing"
 	"time"
 
 	"github.com/coreos/go-oidc/oauth2"
@@ -35,6 +36,8 @@ import (
 	"github.com/jonboulle/clockwork"
 	"gopkg.in/check.v1"
 )
+
+func TestAPI(t *testing.T) { check.TestingT(t) }
 
 type OIDCSuite struct {
 	a *Server
