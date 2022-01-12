@@ -47,10 +47,22 @@ type Engine struct {
 	Clock clockwork.Clock
 	// Log is used for logging.
 	Log logrus.FieldLogger
+	//
+	clientConn net.Conn
+}
+
+// InitializeConnection initializes the client connection.
+func (e *Engine) InitializeConnection(clientConn net.Conn, _ *common.Session) error {
+	e.clientConn = clientConn
+	return nil
+}
+
+// SendError sends an error to SQL Server client.
+func (e *Engine) SendError(err error) {
 }
 
 //
-func (e *Engine) HandleConnection(ctx context.Context, sessionCtx *common.Session, clientConn net.Conn) (err error) {
+func (e *Engine) HandleConnection(ctx context.Context, sessionCtx *common.Session) (err error) {
 	fmt.Println("=== [AGENT] Received SQL Server connection ===")
 
 	// TODO: Add authz
@@ -94,8 +106,8 @@ func (e *Engine) HandleConnection(ctx context.Context, sessionCtx *common.Sessio
 	clientErrCh := make(chan error, 1)
 	serverErrCh := make(chan error, 1)
 
-	go e.receiveFromClient(clientConn, serverConn, clientErrCh)
-	go e.receiveFromServer(serverConn, clientConn, serverErrCh)
+	go e.receiveFromClient(e.clientConn, serverConn, clientErrCh)
+	go e.receiveFromServer(serverConn, e.clientConn, serverErrCh)
 
 	select {
 	case err := <-clientErrCh:
