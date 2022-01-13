@@ -13,8 +13,8 @@
 #   Master/dev branch: "1.0.0-dev"
 VERSION=8.1.0
 
-DOCKER_IMAGE ?= quay.io/gravitational/teleport
-DOCKER_IMAGE_CI ?= quay.io/gravitational/teleport-ci
+DOCKER_IMAGE ?= ghcr.io/fevo-tech/teleport
+DOCKER_IMAGE_CI ?=
 
 GOPATH ?= $(shell go env GOPATH)
 
