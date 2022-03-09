@@ -47,7 +47,7 @@ Follow instructions at: https://www.packer.io/docs/install/index.html
 make oss
 ```
 
-6. Once complete, your AMI should be available, in the regions you specified, with the name  `teleport-debug-ami-<type>-<version>`. (e.g. teleport-debug-ami-oss-4.2.10)
+6. Once complete, your AMI should be available, in the regions you specified, with the name  `teleport-fevo-ami-<version>`. (e.g. teleport-fevo-ami-8.2.0-fevo)
 
 ## Usage instructions
 
