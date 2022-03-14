@@ -11,7 +11,7 @@
     "telegraf_version": "{{env `TELEGRAF_VERSION`}}",
     "influxdb_version": "{{env `INFLUXDB_VERSION`}}",
     "grafana_version": "{{env `GRAFANA_VERSION`}}",
-    "ami_name": "teleport-debug-ami-{{env `TELEPORT_TYPE`}}-{{env `TELEPORT_VERSION`}}",
+    "ami_name": "teleport-fevo-ami-{{env `TELEPORT_VERSION`}}",
     "build_type": "debug"
   },
   "builders": [{
