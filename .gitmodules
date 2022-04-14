@@ -1,0 +1,3 @@
+[submodule "go-oidc"]
+	path = go-oidc
+	url = https://github.com/Gregy/go-oidc
